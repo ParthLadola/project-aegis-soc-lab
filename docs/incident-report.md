@@ -51,7 +51,11 @@ Network segmentation contained the blast radius:
 **Immediate response (performed):**
 1. Removed the temporary quarantine allow rule, restoring full isolation of the adversary host.
 2. Disabled SSH password authentication server-wide (`PasswordAuthentication no`, plus the Ubuntu drop-in override in `/etc/ssh/sshd_config.d/`), enforcing **key-only** login.
-3. Verified: key authentication still succeeds; password authentication is now refused (`Permission denied (publickey)`). *(Screenshot: before/after.)*
+3. Verified: key authentication still succeeds; password authentication is now refused (`Permission denied (publickey)`).
+
+| Password auth refused (hardening in effect) | Key-based login still succeeds |
+|---|---|
+| ![password auth refused](screenshots/ssh-hardening-after.png) | ![key login succeeds](screenshots/ssh-key-login.png) |
 
 **Recommendations (production):**
 - Enforce key-only SSH via configuration management across all Linux hosts.

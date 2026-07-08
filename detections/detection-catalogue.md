@@ -18,7 +18,7 @@ nmap -sS -sV 10.10.20.20
 
 | Attacker action | Detection in Wazuh |
 |---|---|
-| ![nmap scan](../screenshots/d1-nmap-scan.png) | ![suricata alert](../screenshots/d1-wazuh-suricata-alert.png) |
+| ![nmap scan](screenshots/d1-nmap-scan.png) | ![suricata alert](screenshots/d1-wazuh-suricata-alert.png) |
 
 ---
 
@@ -30,11 +30,11 @@ hydra -l aegis-ubuntu -P passlist.txt ssh://10.10.20.20
 ```
 **Detected by:** Wazuh agent reading `/var/log/auth.log` on the Linux server.
 **Signal:** Individual auth-failure events (level 5) correlated into brute-force alert **rule 2502** (level 10), attacker source correctly parsed as `10.10.99.100`.
-**Requirement met:** REQ-SIEM-4 (brute-force / failed-logon pattern). This detection anchors the [incident report](../docs/incident-report.md).
+**Requirement met:** REQ-SIEM-4 (brute-force / failed-logon pattern). This detection anchors the [incident report](incident-report.md).
 
 | Attacker action | Detection in Wazuh |
 |---|---|
-| ![hydra brute force](../screenshots/d2-hydra.png) | ![wazuh brute force alert](../screenshots/d2-wazuh-2502.png) |
+| ![hydra brute force](screenshots/d2-hydra.png) | ![wazuh brute force alert](screenshots/d2-wazuh-2502.png) |
 
 ---
 
@@ -46,12 +46,12 @@ net user eviladmin <pw> /add /domain
 net group "Domain Admins" eviladmin /add /domain
 ```
 **Detected by:** Windows Security auditing (enabled via GPO) → Wazuh agent on the DC.
-**Signal:** Event **4720** (account created) + Event **4728** (member added to security-enabled global group) for `eviladmin`.
+**Signal:** Wazuh captured the account-creation event chain on the DC — Event 4720 (account created), 4722 (enabled), 4738 (changed) — for the eviladmin account, via Windows Security auditing.
 **Requirement met:** REQ-SIEM-4 (new privileged account / group change). Account was removed immediately after validation.
 
 | Attacker action | Detection in Wazuh |
 |---|---|
-| ![create domain admin](../screenshots/d3-net-group.png) | ![wazuh 4728](../screenshots/d3-wazuh-4728.png) |
+| ![create domain admin](screenshots/d3-net-group.png) | ![wazuh account events](screenshots/d3-wazuh-account-events.png) |
 
 ---
 
@@ -63,6 +63,19 @@ alert tcp any any -> any any (msg:"AEGIS-TEST Custom IDS signature triggered"; c
 ```
 **Status:** Rule verified as loaded in the running engine (present in `rule-files`, on disk, no SID conflict). Validation of the live trigger surfaced a pcap-capture nuance on the virtualized VLAN sub-interface for single-packet payload matches — documented as a finding. Behavioral (scan) and host-based detections above fully cover the IDS-to-SIEM requirement.
 **Value:** demonstrates rule authoring + engine-level verification + methodical diagnosis of the difference between flow-based and payload-content inspection.
+
+---
+
+## Detection 5 — Segmentation enforcement (firewall)
+
+**Action:** An inter-VLAN attempt from the USERS segment toward the SERVERS segment (ICMP `10.10.30.100` → `10.10.20.20`), which the default-deny posture is designed to block.
+**Detected by:** pfSense filterlog → forwarded to Wazuh via syslog (custom filterlog decoder).
+**Signal:** pfSense default-deny **rule 100201** blocked the packet (`pfSense: blocked icmp 10.10.30.100 -> 10.10.20.20 on vtnet1.30`), surfaced as an event in the Wazuh SIEM — proving segmentation is not just configured but observable in the SIEM.
+**Requirement met:** REQ-SIEM-4 (blocked inter-zone traffic surfaced as a detection).
+
+| Blocked inter-VLAN attempt in Wazuh |
+|---|
+| ![segmentation block](screenshots/d5-segmentation-block.png) |
 
 ---
 
