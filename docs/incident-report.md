@@ -1,7 +1,7 @@
 # Incident Report — SSH Brute-Force Against Application Server
 
 **Environment:** Project AEGIS lab · **Classification:** Training exercise · **Analyst:** Parth Ladola
-**Date:** [fill in] · **Severity:** Medium (contained; no compromise)
+**Date:** 2026-07-07 · **Severity:** Medium (contained; no compromise)
 
 ---
 
@@ -18,7 +18,7 @@ A sustained SSH password-guessing attack was observed against the Linux applicat
 | Detection source | Wazuh host agent — `/var/log/auth.log` |
 | Triggering rule | Rule 2502 — repeated authentication failures (correlated) |
 | Alert level | 10 |
-| First event | [timestamp] |
+| First event | Jul 7, 2026 @ 17:56:05.474 |
 | Attacker source IP | 10.10.99.100 (QUARANTINE / adversary host) |
 | Target | 10.10.20.20 : 22 (Linux application server, SERVERS VLAN) |
 | Target account | `aegis-ubuntu` |
@@ -29,7 +29,7 @@ The individual failed-login events (rule ~5710-class, level 5) were correlated b
 
 ## 3. Triage
 
-- **Volume:** [N] failed attempts from a single source in [N] seconds.
+- **Volume:** 15 failed attempts from a single source in 49 seconds.
 - **Source:** `10.10.99.100` — a host in the QUARANTINE VLAN, which by design should have **no** standing access to the SERVERS VLAN.
 - **Outcome:** All attempts failed — `0 valid passwords found`. No successful authentication in the log.
 - **Credential exposure:** The targeted account used a deliberately weak lab password. In production this would be flagged as a policy violation.
