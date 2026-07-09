@@ -2,7 +2,7 @@
 
 > Designed, built, and defended a segmented small-enterprise network with centralized identity, SIEM monitoring, and network intrusion detection — then validated the defenses against live adversary activity. Built end-to-end on a single virtualization host for under CAD $200, in response to a portfolio-grade RFP modeling a real Network / Security Analyst engagement.
 
-![Architecture](docs/architecture-after.png)
+![Architecture — after](docs/AEGIS_architecture_after.drawio.png)
 
 ---
 
@@ -11,7 +11,12 @@
 A fictional 35-person distributor (*Northwind Outfitters*) ran a flat, unsegmented network — one consumer router, a single file server, no segmentation, no logging, no intrusion detection. After a phishing scare and a failed cyber-insurance questionnaire, the mandate was to re-architect to a small-enterprise standard and stand up security monitoring. This project is my response to that RFP.
 
 **Before:** flat `/24`, everything trusts everything, zero visibility.
+
+![Architecture — before](docs/AEGIS_architecture_before.drawio.png)
+
 **After:** four segmented VLANs, stateful default-deny firewall, Active Directory, a Wazuh SIEM ingesting host + firewall + IDS telemetry, and Suricata network IDS — with detections validated against a live adversary host.
+
+![Architecture — after](docs/AEGIS_architecture_after.drawio.png)
 
 ---
 
@@ -54,7 +59,7 @@ Each detection was triggered with a real action from the isolated adversary host
 
 ## Deliverables
 
-- 📐 [Architecture diagram](docs/architecture-after.png) — VLANs, firewall, hosts, trust boundaries, allowed flows
+- 📐 [Architecture diagram](docs/AEGIS_architecture_after.drawio.png) — VLANs, firewall, hosts, trust boundaries, allowed flows
 - 📋 [IP addressing plan & VLAN table](docs/ip-plan.md)
 - 🔥 [Firewall rule matrix with per-rule justification](docs/firewall-rule-matrix.md)
 - 🔎 [Detection catalogue with evidence](detections/detection-catalogue.md)
